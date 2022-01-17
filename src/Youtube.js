@@ -9,8 +9,8 @@ function Youtube() {
     }
 
     const opts = {
-        height: 200,
-        width: 400,
+        height: 480,
+        width: 600,
         playerVars: {
         // https://developers.google.com/youtube/player_parameters
         autoplay: 1
