@@ -26,7 +26,7 @@ function Cursor() {
     return useFrame((state) => {
       const x = state.mouse.x * state.viewport.width
       const y = (state.mouse.y * state.viewport.height)
-      api.position.set(-x*2, y*4, x*0.3)
+      api.position.set(0, y*4,-x*2)
     })
   }
 export { useDragConstraint, cursor, Cursor }
