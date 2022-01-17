@@ -1,11 +1,20 @@
-import React, { useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
+import React, { useRef } from 'react';
+import { useGLTF } from '@react-three/drei';
+import { Physics, useBox, usePlane } from '@react-three/cannon';
 
 export default function Model(props) {
   const group = useRef()
-  const { nodes, materials } = useGLTF('/room_v39.gltf')
+  const { nodes, materials } = useGLTF('/room_v39.gltf');
+
+
+  const [planeRef] = usePlane(()=>({rotation : [-Math.PI/2,0,0], position : [0,0.003,0]}));
+  const [ref] = useBox(() => ({ mass: 1, ...props }));
+  const [shoe1Ref, shoe1Api] = useBox(()=>({mass : 0.005, args : [0.005,0.005,0.005]}));
+  const [shoe2Ref, shoe2Api] = useBox(()=>({mass : 0}));
+
   return (
     <group ref={group} {...props} dispose={null} scale={100}>
+
       <mesh castShadow receiveShadow geometry={nodes.bed_bedding2.geometry} material={nodes.bed_bedding2.material} />
       <mesh castShadow receiveShadow geometry={nodes.bed_bedding3.geometry} material={nodes.bed_bedding3.material} />
       <mesh castShadow receiveShadow geometry={nodes.bed_down10.geometry} material={nodes.bed_down10.material} />
@@ -246,19 +255,22 @@ export default function Model(props) {
       <mesh castShadow receiveShadow geometry={nodes.shelf_body001.geometry} material={nodes.shelf_body001.material} />
       <mesh castShadow receiveShadow geometry={nodes.shelf_leg1_1.geometry} material={nodes.shelf_leg1_1.material} />
       <mesh castShadow receiveShadow geometry={nodes.shelf_leg2.geometry} material={nodes.shelf_leg2.material} />
-      <mesh castShadow receiveShadow geometry={nodes.shoe_bottom2.geometry} material={nodes.shoe_bottom2.material} />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.shoe_bottom1_1.geometry}
-        material={nodes.shoe_bottom1_1.material}
-      />
-      <mesh castShadow receiveShadow geometry={nodes.shoe_top2.geometry} material={nodes.shoe_top2.material} />
-      <mesh castShadow receiveShadow geometry={nodes.shoe_top1_1.geometry} material={nodes.shoe_top1_1.material} />
+
+      <group ref={shoe1Ref} position={[0, 0.1, 0]}>
+        <mesh castShadow receiveShadow geometry={nodes.shoe_bottom2.geometry} material={nodes.shoe_bottom2.material} />
+        <mesh castShadow receiveShadow geometry={nodes.shoe_top2.geometry} material={nodes.shoe_top2.material} />
+      </group>
+
+      <group ref={shoe2Ref}>
+        <mesh castShadow receiveShadow geometry={nodes.shoe_top1_1.geometry} material={nodes.shoe_top1_1.material} />
+        <mesh castShadow receiveShadow geometry={nodes.shoe_bottom1_1.geometry} material={nodes.shoe_bottom1_1.material}/>
+      </group>
+
       <mesh castShadow receiveShadow geometry={nodes.trash001.geometry} material={nodes.trash001.material} />
       <mesh castShadow receiveShadow geometry={nodes.trash_can.geometry} material={nodes.trash_can.material} />
       <mesh castShadow receiveShadow geometry={nodes.wall_main.geometry} material={nodes.wall_main.material} />
       <mesh castShadow receiveShadow geometry={nodes.wall_bar.geometry} material={nodes.wall_bar.material} />
+
       <mesh castShadow receiveShadow geometry={nodes.floor_wood1.geometry} material={nodes.floor_wood1.material} />
       <mesh castShadow receiveShadow geometry={nodes.floor_wood2.geometry} material={nodes.floor_wood2.material} />
       <mesh castShadow receiveShadow geometry={nodes.floor_wood3.geometry} material={nodes.floor_wood3.material} />
@@ -269,6 +281,12 @@ export default function Model(props) {
       <mesh castShadow receiveShadow geometry={nodes.floor_wood7.geometry} material={nodes.floor_wood7.material} />
       <mesh castShadow receiveShadow geometry={nodes.floor_wood8.geometry} material={nodes.floor_wood8.material} />
       <mesh castShadow receiveShadow geometry={nodes.floor_wood9.geometry} material={nodes.floor_wood9.material} />
+
+      <mesh ref={planeRef}>
+        <planeGeometry args={[0.3, 0.3]} color={'#ffffff'} />
+      </mesh>
+
+
     </group>
   )
 }
