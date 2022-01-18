@@ -1,25 +1,17 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
 import { useGLTF, Html } from '@react-three/drei'
-import { KernelSize, Resizer } from 'postprocessing'
-import { EffectComposer, Bloom, SelectiveBloom } from '@react-three/postprocessing'
+import { useFrame, useThree, extend } from '@react-three/fiber'
 import Youtube from './Youtube'
 import * as THREE from 'three'
-import { useFrame } from '@react-three/fiber'
+import { EffectComposer, SelectiveBloom, Bloom } from '@react-three/postprocessing'
+import { BlurPass, Resizer, KernelSize } from 'postprocessing'
 
-
-function damp(target, to, step, delta, v = new THREE.Vector3()) {
-  if (target instanceof THREE.Vector3) {
-    target.x = THREE.MathUtils.damp(target.x, to[0], step, delta)
-    target.y = THREE.MathUtils.damp(target.y, to[1], step, delta)
-    target.z = THREE.MathUtils.damp(target.z, to[2], step, delta)
-  }
-}
 
 export default function Model(props) {
 
   const group = useRef()
-  const light1 = useRef()
   const neon_hello_1 = useRef()
+  const neon_hello_2 = useRef()
 
   const { nodes, materials } = useGLTF('/room_cleared.gltf')
 
@@ -29,19 +21,28 @@ export default function Model(props) {
 
   useEffect(() => void (document.body.style.cursor = hover ? 'pointer' : 'auto'), [hover])
 
-  useFrame((state, delta) => {
-    const step = 4
-    state.camera.fov = THREE.MathUtils.damp(state.camera.fov, comClick ? 20 : 50, step, delta)
+  const { invalidate } = useThree()
+  const destination = useMemo(() => new THREE.Vector3(), [])
+
+  useEffect(() => {
+    destination.set(70, 50, 10);
+    invalidate();
+  }, [invalidate, destination]);
+
+  useFrame((state) => {
+    const step = 0.1
     if (comClick) {
-      damp(state.camera.position, [100,100,100], step, delta)
-      state.camera.lookAt(100,100,100)
+      state.camera.fov = THREE.MathUtils.lerp(state.camera.fov, 20, step)
+      state.camera.position.lerp(destination,step)
+      state.camera.updateProjectionMatrix()
     }
+    state.camera.fov = THREE.MathUtils.lerp(state.camera.fov, 50, step)
     state.camera.updateProjectionMatrix()
   })
 
-  return (
-    <group ref={group} {...props} dispose={null}>
 
+  return (
+    <group ref={group} dispose={null}>
       <mesh
         castShadow
         receiveShadow
@@ -624,7 +625,6 @@ export default function Model(props) {
         material={nodes.memoboard.material}
         position={[-20.22, 63.1, -44.54]}
       />
-      <group >
         <mesh
           ref={neon_hello_1}
           castShadow
@@ -634,6 +634,7 @@ export default function Model(props) {
           position={[17.52, 84.28, -44.25]}
         />
         <mesh
+          ref={neon_hello_2}
           castShadow
           receiveShadow
           geometry={nodes.neon_hello2.geometry}
@@ -696,7 +697,6 @@ export default function Model(props) {
           material={nodes.neon_world5.material}
           position={[33.9, 73.39, -44.29]}
         />
-      </group>
       <mesh
         castShadow
         receiveShadow
