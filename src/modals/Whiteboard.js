@@ -18,7 +18,7 @@ function Whiteboard (props) {
         <div className="canvasWrapper">
             <div>
                 <CanvasDraw
-                    style={{borderRadius : 30}}
+                    style={{borderRadius : 25}}
                     ref={canvasRef}
                     canvasWidth={480}
                     canvasHeight={600}
@@ -34,8 +34,9 @@ function Whiteboard (props) {
                         <div style={{backgroundColor : item}} className="colorItem" onClick={()=>setPick(item)} ></div>
                     );
                 })}
-                <div style={{backgroundColor : '#cccccc', opacity : 0.1}} className="colorItem" onClick={()=>handleDraw()}>
-                    <Yes style={{margin : '1vh'}} fill="#ffffff"/>
+                <div className="colorItem" onClick={()=>handleDraw()}>
+                    <Yes style={{margin : '0.3vh'}} fill="#ffffff"/>
+
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@ import { usePlane, useBox, useConvexPolyhedron } from '@react-three/cannon';
 import { useDragConstraint } from './Drag'
 import * as THREE from 'three';
 import { Geometry } from "three-stdlib";
-import { useLoader } from '@react-three/fiber';
+import { useLoader, useFrame } from '@react-three/fiber';
 import { TextureLoader } from "three/src/loaders/TextureLoader.js";
 
 
@@ -45,17 +45,39 @@ export default function Model(props) {
   const drawTexture = useLoader(TextureLoader, path); // set path from public directory
   const githubTexture = useLoader(TextureLoader, 'github.jpeg');
 
+  const [imageShake, setImageShake] = useState(0);
+  const imageRef = useRef(null);
+
+  // animation
+  useFrame(()=>{
+    if(imageShake!==0){
+      if(Math.round(imageRef.current.rotation.x) === 1)setImageShake(-1);
+      else if(Math.round(imageRef.current.rotation.x) === -1)setImageShake(1);
+      imageRef.current.rotation.x += (imageShake/8);
+      console.log(imageRef.current.rotation.x);
+    }else if(imageShake===0){
+      imageRef.current.rotation.x = 0;
+    }
+
+  });
 
   return (
     <group ref={group} {...props} dispose={null}>
 
-      <group position={[-44.75, 66, -32]}>
-        <mesh geometry={nodes.image1.geometry} onClick={()=>props.setDraw((val)=>!val)} />
-        <mesh receiveShadow rotation={[0,Math.PI/2,0]} position={[0.35,0,0]}>
-          <boxBufferGeometry attach="geometry" args={[16, 20, 0.1]} />
-          <meshBasicMaterial attach="material" map={drawTexture} />
-        </mesh>
-      </group>
+
+      <mesh ref={imageRef} position={[-44.75, 66, -32]}
+      onPointerEnter={()=>setImageShake(1)} 
+      onPointerLeave={()=>setImageShake(0)}
+      onClick={()=>props.setDraw((val)=>!val)}
+      receiveShadow rotation={[0,Math.PI/2,0]}>
+        <boxBufferGeometry attach="geometry" args={[16, 20, 1]} />
+        <meshBasicMaterial attachArray="material" color={"#dddddd"} />
+        <meshBasicMaterial attachArray="material" color={"#dddddd"} />
+        <meshBasicMaterial attachArray="material" color={"#dddddd"} />
+        <meshBasicMaterial attachArray="material" color={"#dddddd"} />
+        <meshBasicMaterial attachArray="material" map={drawTexture} />
+        <meshBasicMaterial attachArray="material" color={"#dddddd"} />
+      </mesh>
 
 
 
