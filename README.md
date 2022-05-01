@@ -4,7 +4,7 @@
 
 Making 3D room with interactive features
 
-##### made by. 김수효, 이혜원(일어나)
+##### made by. 김수효, 이혜원
 
 
 ## 1. Basic structure
@@ -63,4 +63,3 @@ Fusion 360에서 모델링한 3D 객체를 가져온 뒤, blender 자체적으�
 
 책상 위의 스탠드를 클릭하면 메인 조명이 꺼지고, 스탠드에서 노란빛의 약한 조명이 나와 새벽의 방 느낌을 구현하였다.
 
-### e) Physics
